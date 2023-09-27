@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise Tracker</title>
+  </head>
+  <body>
+    <h1>Exercise Tracker</h1>
+
+    <label for="exerciseInput">Enter an exercise for today:</label>
+    <input type="text" id="exerciseInput" />
+
+    <label for="repetitionsInput">Repetitions:</label>
+    <input type="number" id="repetitionsInput" min="1" />
+
+    <label for="setsInput">Sets:</label>
+    <input type="number" id="setsInput" min="1" />
+
+    <label for="weightInput">Weight (kg):</label>
+    <input type="number" id="weightInput" step="0.5" min="0" />
+
+    <!-- Exercise category selection -->
+    <label for="categorySelect">Category:</label>
+    <select id="categorySelect">
+      <option value="Legs">Legs</option>
+      <option value="Shoulders">Shoulders</option>
+      <option value="Biceps">Biceps</option>
+      <option value="Chest">Chest</option>
+      <option value="Back">Back</option>
+      <option value="Abs">Abs</option>
+      <option value="Triceps">Triceps</option>
+    </select>
+
+    <button onclick="addExercise()">Add Exercise</button>
+
+    <h2>Today's Exercises:</h2>
+    <ul id="exerciseList"></ul>
+
+    <!-- Category filter -->
+    <label for="filterCategory">Filter by Category:</label>
+    <select id="filterCategory" onchange="filterExercises()">
+      <option value="All">All</option>
+      <option value="Legs">Legs</option>
+      <option value="Shoulders">Shoulders</option>
+      <option value="Biceps">Biceps</option>
+      <option value="Chest">Chest</option>
+      <option value="Back">Back</option>
+      <option value="Abs">Abs</option>
+      <option value="Triceps">Triceps</option>
+    </select>
+
+    <script>
+      // Function to add an exercise for today
+      function addExercise() {
+        const exerciseInput = document.getElementById("exerciseInput");
+        const repetitionsInput = document.getElementById("repetitionsInput");
+        const setsInput = document.getElementById("setsInput");
+        const weightInput = document.getElementById("weightInput");
+        const categorySelect = document.getElementById("categorySelect");
+        const exerciseList = document.getElementById("exerciseList");
+
+        const exercise = exerciseInput.value.trim();
+        const repetitions = repetitionsInput.value;
+        const sets = setsInput.value;
+        const weight = weightInput.value;
+        const category = categorySelect.value;
+
+        if (exercise !== "" && repetitions > 0 && sets > 0 && weight >= 0) {
+          const exerciseItem = document.createElement("li");
+          exerciseItem.innerHTML = `<span>${exercise} - Reps: ${repetitions}, Sets: ${sets}, Weight: ${weight} kg, Category: ${category}</span>
+                                          <button onclick="editExercise(this)">Edit</button>
+                                          <button onclick="deleteExercise(this)">Delete</button>`;
+          exerciseList.appendChild(exerciseItem);
+
+          // Clear input fields
+          exerciseInput.value = "";
+          repetitionsInput.value = 1;
+          setsInput.value = 1;
+          weightInput.value = 0;
+        }
+      }
+
+      // Function to delete an exercise
+      function deleteExercise(button) {
+        const exerciseList = document.getElementById("exerciseList");
+        const exerciseItem = button.parentElement;
+        exerciseList.removeChild(exerciseItem);
+      }
+
+      // Function to edit an exercise
+      function editExercise(button) {
+        const exerciseItem = button.parentElement;
+        const exerciseInfo = exerciseItem.querySelector("span");
+        const exerciseInfoText = exerciseInfo.textContent;
+        const parts = exerciseInfoText.split(" - ");
+        const exerciseName = parts[0];
+        const exerciseDetails = parts[1].split(", ");
+        const repetitions = exerciseDetails[0].split(": ")[1];
+        const sets = exerciseDetails[1].split(": ")[1];
+        const weight = exerciseDetails[2].split(": ")[1];
+        const category = exerciseDetails[3].split(": ")[1];
+
+        // Fill input fields with existing data
+        const exerciseInput = document.getElementById("exerciseInput");
+        const repetitionsInput = document.getElementById("repetitionsInput");
+        const setsInput = document.getElementById("setsInput");
+        const weightInput = document.getElementById("weightInput");
+        const categorySelect = document.getElementById("categorySelect");
+
+        exerciseInput.value = exerciseName;
+        repetitionsInput.value = parseInt(repetitions);
+        setsInput.value = parseInt(sets);
+        weightInput.value = parseFloat(weight);
+        categorySelect.value = category;
+
+        // Remove the edited exercise
+        const exerciseList = document.getElementById("exerciseList");
+        exerciseList.removeChild(exerciseItem);
+      }
+
+      // Function to filter exercises by category
+      function filterExercises() {
+        const filterCategory = document.getElementById("filterCategory").value;
+        const exerciseList = document.getElementById("exerciseList");
+        const exerciseItems = exerciseList.getElementsByTagName("li");
+
+        for (const exerciseItem of exerciseItems) {
+          if (
+            filterCategory === "All" ||
+            exerciseItem.textContent.includes(`Category: ${filterCategory}`)
+          ) {
+            exerciseItem.style.display = "block";
+          } else {
+            exerciseItem.style.display = "none";
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
